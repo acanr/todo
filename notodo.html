@@ -39,6 +39,10 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
 .sb-lbl{font-size:10px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--t3);padding:8px 8px 3px;display:flex;align-items:center;justify-content:space-between}
 .sb-lbl-btn{cursor:pointer;background:none;border:none;color:var(--t3);font-size:12px;padding:1px 4px;border-radius:3px;line-height:1;opacity:0.7}
 .sb-lbl-btn:hover{opacity:1;background:var(--b1)}
+.area-menu-btn{margin-left:auto;background:none;border:none;color:var(--t3);font-size:13px;cursor:pointer;padding:0 3px;border-radius:3px;opacity:0;transition:opacity 0.1s;line-height:1;flex-shrink:0;letter-spacing:1px}
+.ni:hover .area-menu-btn{opacity:0.6}
+.area-menu-btn:hover{opacity:1!important;background:var(--b1)}
+.sb-lbl-btn:hover{opacity:1;background:var(--b1)}
 .ni{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:var(--rmd);cursor:pointer;color:var(--t2);font-size:13px;transition:all 0.1s}
 .ni:hover{background:var(--b1);color:var(--t1)}
 .ni.active{background:var(--surf);color:var(--t1);font-weight:500;box-shadow:var(--sh1)}
@@ -194,22 +198,25 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
 .todo-cb.done{background:var(--green);border-color:var(--green);animation:checkPop 0.22s ease}
 .todo-cb.done::after{content:'';position:absolute;top:50%;left:50%;width:7px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:translate(-50%,-60%) rotate(-45deg)}
 @keyframes checkPop{0%{transform:scale(1)}45%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes todoAdded{0%{background:rgba(29,158,117,0.12)}100%{background:transparent}}
+.todo-item.just-added{animation:todoAdded 0.6s ease}
 
 /* Todo text */
-.todo-txt{flex:1;font-size:13px;color:var(--t2);line-height:1.5;outline:none;cursor:text;word-break:break-word;min-height:20px}
+.todo-txt{flex:1;font-size:13px;color:var(--t2);line-height:1.5;outline:none;cursor:text;word-break:break-word;min-height:20px;border-radius:4px;padding:0 2px;margin:0 -2px;transition:background 0.1s}
+.todo-txt:hover:not(.done){background:var(--bg)}
 .todo-txt.done{text-decoration:line-through;color:var(--t3)}
 .todo-txt:focus{color:var(--t1)}
 
 /* Todo date */
 .todo-date-btn{font-size:10px;font-weight:500;padding:1px 6px;border-radius:20px;flex-shrink:0;margin-top:3px;cursor:pointer;border:none;font-family:var(--font);transition:opacity 0.1s}
-.todo-date-btn.nd{background:var(--bg);color:var(--t3);opacity:0}
+.todo-date-btn.nd{background:transparent;color:var(--t3);opacity:0.3}
 .todo-date-btn.fut{background:#EFF6FF;color:#3B82F6}
 .todo-date-btn.tod{background:#FEF3C7;color:#D97706;font-weight:600}
 .todo-date-btn.ovd{background:#FEE2E2;color:#DC2626;font-weight:600}
 [data-theme="dark"] .todo-date-btn.fut{background:#1E3A5F;color:#60A5FA}
 [data-theme="dark"] .todo-date-btn.tod{background:#3D2C0A;color:#FCD34D}
 [data-theme="dark"] .todo-date-btn.ovd{background:#3B0F0F;color:#F87171}
-[data-theme="dark"] .todo-date-btn.nd{background:var(--surf2);color:var(--t3);opacity:0}
+[data-theme="dark"] .todo-date-btn.nd{background:transparent;color:var(--t3);opacity:0.3}
 
 /* Todo delete */
 .todo-del{width:16px;height:16px;border-radius:50%;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);flex-shrink:0;margin-top:2px;opacity:0;transition:all 0.1s;font-size:10px;line-height:1}
@@ -293,6 +300,8 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
 .scrow{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
 .scrow span{font-size:12px;color:var(--t2)}
 
+.dsave-hint{font-size:10px;color:var(--t3);padding:0 22px 6px;opacity:0;transition:opacity 1s;text-align:right;flex-shrink:0}
+.dsave-hint.show{opacity:1}
 /* COLORS */
 .tag-purple{background:#EEEDFE;color:#534AB7}.tag-teal{background:#E1F5EE;color:#0F6E56}
 .tag-coral{background:#FAECE7;color:#993C1D}.tag-amber{background:#FAEEDA;color:#854F0B}
@@ -316,7 +325,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
     <div class="sb-sec">
       <div class="ni active" id="ni-inbox" onclick="switchView('inbox')">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 3a1 1 0 011-1h12a1 1 0 011 1v2l-2 4H3L1 5V3zm1 8.5V13a1 1 0 001 1h10a1 1 0 001-1v-1.5H9.5a1.5 1.5 0 01-3 0H2z"/></svg>
-        Gelen Kutusu<span class="bdg" id="bdg-inbox"></span>
+        Notlarım<span class="bdg" id="bdg-inbox"></span>
       </div>
       <div class="ni" id="ni-today" onclick="switchView('today')">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="13" height="12" rx="2"/><path d="M5 1v3M11 1v3M1.5 7h13" stroke-linecap="round"/></svg>
@@ -397,6 +406,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
       <textarea class="dti" id="d-title" placeholder="Başlık..." rows="1" oninput="autoResizeTitle();saveNote()"></textarea>
       <button class="cbtn" onclick="closeDetail()" title="Kapat (Esc)">&#x2715;</button>
     </div>
+    <div class="dsave-hint" id="dsave-hint">otomatik kaydediliyor</div>
     <div class="dmeta">
       <span class="mlbl">Alan:</span>
       <select class="asel" id="d-area" onchange="saveNote();renderList()"></select>
@@ -577,7 +587,7 @@ function renderSidebar(){
   for(var i=0;i<areas.length;i++){
     var a=areas[i];var cnt=notes.filter(function(n){return !n.archived&&n.area===a.id;}).length;
     h+='<div class="ni'+(view===a.id?' active':'')+('" onclick="switchView(\''+a.id+'\')" oncontextmenu="areaCtx(event,\''+a.id+'\')" title="Düzenle için sağ tık">')+
-      '<div class="adot" style="background:'+colorHex(a.color)+'"></div>'+esc(a.name)+(cnt?'<span class="bdg">'+cnt+'</span>':'')+
+      '<div class="adot" style="background:'+colorHex(a.color)+'"></div>'+esc(a.name)+(cnt?'<span class="bdg">'+cnt+'</span>':'')+'<button class="area-menu-btn" onclick="areaMenuBtn(event,\''+a.id+'\')" title="Alan seçenekleri">···</button>'+
       '</div>';
   }
   nav.innerHTML=h;
@@ -619,7 +629,7 @@ function renderTodoGroupView(onlyDone){
 }
 
 function renderList(){
-  var tm={inbox:'Gelen Kutusu',today:'Bugün',allnotes:'Tüm Notlar',alltodos:"Tüm Todo'lar",done:'Tamamlananlar',archive:'Arşiv'};
+  var tm={inbox:'Notlarım',today:'Bugün',allnotes:'Tüm Notlar',alltodos:"Tüm Todo'lar",done:'Tamamlananlar',archive:'Arşiv'};
   var ttl=tm[view];if(!ttl){var a=getArea(view);ttl=a?a.name:view;}
   document.getElementById('mtitle').textContent=ttl;
   var v=getVisible();var h='';
@@ -629,7 +639,7 @@ function renderList(){
   if(!v.length&&!addMode){
     var eq=document.getElementById('search').value;
     if(view==='archive')h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M2 7l2-4h16l2 4"/><path d="M9 12h6" stroke-linecap="round"/></svg></div><h3>Arşiv boş</h3><p>Arşivlenen notlar burada görünür</p></div>';
-    else if(view==='today')h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v3M16 2v3M3 10h18"/></svg></div><h3>Bugün boş</h3><p>Notlara "Bugüne ekle" yaparak buraya taşı</p></div>';
+    else if(view==='today')h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v3M16 2v3M3 10h18"/></svg></div><h3>Bugün boş</h3><p>Herhangi bir notu aç, üstteki <span style="display:inline-flex;align-items:center;gap:3px;background:var(--bg);padding:1px 6px;border-radius:10px;font-size:10px;color:var(--acc);border:1px solid var(--b2)"><span style="width:6px;height:6px;border-radius:50%;background:var(--acc);display:inline-block"></span>Bugüne ekle</span> butonuna tıkla</p></div>';
     else if(eq)h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><h3>Sonuç bulunamadı</h3><p>Farklı bir arama dene</p></div>';
     else h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M11 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-5"/><path d="M18 2l4 4-8 8H10v-4l8-8z"/></svg></div><h3>Henüz not yok</h3><p>İlk notunu oluştur</p><button class="empty-cta" onclick="startAdd()">+ Yeni Not</button></div>';
   }
@@ -713,6 +723,9 @@ function saveNote(){
   note.body=document.getElementById('d-body').value;
   note.area=document.getElementById('d-area').value||null;
   note.updatedAt=Date.now();lsSet('notes',notes);renderList();
+  // save hint
+  var sh=document.getElementById('dsave-hint');
+  if(sh){sh.classList.add('show');clearTimeout(sh._t);sh._t=setTimeout(function(){sh.classList.remove('show');},1400);}
 }
 
 function setColor(color){
@@ -812,9 +825,11 @@ function onTodoAddKey(e){
     var val=e.target.value.trim();if(!val)return;
     var note=getNote(selId);if(!note)return;
     if(!note.todos)note.todos=[];
-    note.todos.push({id:tid(),text:val,done:false,date:''});
+    var newId=tid();note.todos.push({id:newId,text:val,done:false,date:''});
     note.updatedAt=Date.now();lsSet('notes',notes);
     e.target.value='';renderTodos();renderList();
+    // flash animation
+    setTimeout(function(){var el=document.querySelector('[data-id="'+newId+'"]');if(el)el.classList.add('just-added');},10);
   }
   if(e.key==='Escape'){e.target.value='';e.target.blur();}
 }
@@ -864,7 +879,7 @@ function deleteNote(){
   var del=JSON.parse(JSON.stringify(note));var idx=notes.indexOf(note);
   notes=notes.filter(function(n){return n.id!==selId;});lsSet('notes',notes);
   undoStack={note:del,idx:idx};closeDetail();
-  showToast('Not silindi','Geri al',4000);
+  showToast('Not silindi','Geri al',4500);
 }
 function undoDelete(){
   if(!undoStack)return;
@@ -896,6 +911,7 @@ function deleteArea(id){
   lsSet('areas',areas);lsSet('notes',notes);if(view===id)switchView('inbox');else renderSidebar();
   showToast('Alan silindi',null,1800);
 }
+function areaMenuBtn(e,id){e.stopPropagation();areaCtx(e,id);}
 function areaCtx(e,id){
   e.preventDefault();e.stopPropagation();closeAllPops();
   var pop=document.createElement('div');pop.className='ctx-menu';pop.id='ctx-pop';
