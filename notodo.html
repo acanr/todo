@@ -328,7 +328,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
         Notlarım<span class="bdg" id="bdg-inbox"></span>
       </div>
       <div class="ni" id="ni-today" onclick="switchView('today')">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="13" height="12" rx="2"/><path d="M5 1v3M11 1v3M1.5 7h13" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M11.54 3.05l-1.41 1.41M3.05 11.54l1.41 1.41" stroke-linecap="round"/></svg>
         Bugün<span class="bdg" id="bdg-today"></span>
       </div>
       <div class="ni" id="ni-allnotes" onclick="switchView('allnotes')">
@@ -502,7 +502,7 @@ if(!notes){
   lsSet('notes',notes);
 }
 
-var view='inbox',selId=null,addMode=false,newAreaColor='purple',editAreaId=null,curDateTodoId=null;
+var view=lsGet('lastView','today'),selId=null,addMode=false,newAreaColor='purple',editAreaId=null,curDateTodoId=null;
 var undoStack=null,toastTimer=null;
 
 // HELPERS
@@ -629,7 +629,11 @@ function renderTodoGroupView(onlyDone){
 }
 
 function renderList(){
-  var tm={inbox:'Notlarım',today:'Bugün',allnotes:'Tüm Notlar',alltodos:"Tüm Todo'lar",done:'Tamamlananlar',archive:'Arşiv'};
+  // Today view: tarihi göster
+  var nowD=new Date();var dayNames=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+  var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+  var todayLabel='Bugün — '+dayNames[nowD.getDay()]+', '+nowD.getDate()+' '+monthNames[nowD.getMonth()];
+  var tm={inbox:'Notlarım',today:todayLabel,allnotes:'Tüm Notlar',alltodos:"Tüm Todo'lar",done:'Tamamlananlar',archive:'Arşiv'};
   var ttl=tm[view];if(!ttl){var a=getArea(view);ttl=a?a.name:view;}
   document.getElementById('mtitle').textContent=ttl;
   var v=getVisible();var h='';
@@ -639,7 +643,7 @@ function renderList(){
   if(!v.length&&!addMode){
     var eq=document.getElementById('search').value;
     if(view==='archive')h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M2 7l2-4h16l2 4"/><path d="M9 12h6" stroke-linecap="round"/></svg></div><h3>Arşiv boş</h3><p>Arşivlenen notlar burada görünür</p></div>';
-    else if(view==='today')h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v3M16 2v3M3 10h18"/></svg></div><h3>Bugün boş</h3><p>Herhangi bir notu aç, üstteki <span style="display:inline-flex;align-items:center;gap:3px;background:var(--bg);padding:1px 6px;border-radius:10px;font-size:10px;color:var(--acc);border:1px solid var(--b2)"><span style="width:6px;height:6px;border-radius:50%;background:var(--acc);display:inline-block"></span>Bugüne ekle</span> butonuna tıkla</p></div>';
+    else if(view==='today')h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M16.95 4.93l-2.12 2.12M4.93 16.95l2.12 2.12" stroke-linecap="round"/></svg></div><h3>Bugün için hiçbir şey yok</h3><p>Bugüne odaklanmak için notlarından birini seç ve <span style="display:inline-flex;align-items:center;gap:3px;background:var(--acc-l);padding:1px 7px;border-radius:10px;font-size:10px;color:var(--acc);font-weight:500">&#9679; Bugüne ekle</span> butonuna tıkla</p><button class="empty-cta" onclick="switchView(\'inbox\')">Notlara git</button></div>';
     else if(eq)h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><h3>Sonuç bulunamadı</h3><p>Farklı bir arama dene</p></div>';
     else h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M11 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-5"/><path d="M18 2l4 4-8 8H10v-4l8-8z"/></svg></div><h3>Henüz not yok</h3><p>İlk notunu oluştur</p><button class="empty-cta" onclick="startAdd()">+ Yeni Not</button></div>';
   }
@@ -889,7 +893,7 @@ function undoDelete(){
   showToast('Geri alındı',null,1500);openDetail(restoredId);
 }
 
-function switchView(v){view=v;selId=null;addMode=false;closeDetail();closeAllPops();renderList();}
+function switchView(v){view=v;lsSet('lastView',v);selId=null;addMode=false;closeDetail();closeAllPops();renderList();}
 
 // ── AREAS ──
 function openAreaModal(){editAreaId=null;newAreaColor='purple';document.getElementById('area-inp').value='';document.getElementById('area-modal-title').textContent='Yeni Alan Ekle';document.getElementById('area-save-btn').textContent='Ekle';buildColorGrid();document.getElementById('area-overlay').classList.add('open');setTimeout(function(){document.getElementById('area-inp').focus();},100);}
