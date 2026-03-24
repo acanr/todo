@@ -311,6 +311,55 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
 [data-theme="dark"] .tag-blue{background:#042C53;color:#85B7EB}[data-theme="dark"] .tag-pink{background:#4B1528;color:#ED93B1}
 [data-theme="dark"] .tag-gray{background:#2C2C2A;color:#B4B2A9}
 
+
+/* ── RETENTION FEATURES ── */
+
+/* Sabah intent prompt */
+.intent-banner{margin:10px 12px 0;padding:12px 14px;background:linear-gradient(135deg,var(--acc-l),var(--bg));border:1px solid rgba(91,76,245,0.15);border-radius:var(--rlg);display:none}
+.intent-banner.show{display:block}
+.intent-banner h4{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:8px}
+.intent-banner p{font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.5}
+.intent-actions{display:flex;gap:6px;flex-wrap:wrap}
+.intent-pick{font-family:var(--font);font-size:12px;padding:5px 12px;border:1px solid var(--b2);border-radius:var(--rsm);background:var(--surf);color:var(--t2);cursor:pointer;transition:all 0.1s;text-align:left;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.intent-pick:hover{border-color:var(--acc);color:var(--acc)}
+.intent-dismiss{font-family:var(--font);font-size:11px;padding:5px 8px;border:none;background:transparent;color:var(--t3);cursor:pointer;border-radius:var(--rsm)}
+.intent-dismiss:hover{background:var(--b1);color:var(--t2)}
+
+/* Akşam kapanış banner */
+.evening-banner{margin:10px 12px 0;padding:12px 14px;background:var(--bg);border:1px solid var(--b1);border-radius:var(--rlg);display:none;animation:slideDown 0.2s ease}
+.evening-banner.show{display:block}
+.evening-banner .ev-title{font-size:13px;font-weight:600;color:var(--t1);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.evening-banner .ev-sub{font-size:12px;color:var(--t2);margin-bottom:10px}
+.evening-banner .ev-actions{display:flex;gap:6px}
+.ev-btn{font-family:var(--font);font-size:12px;padding:5px 12px;border:1px solid var(--b2);border-radius:var(--rsm);background:var(--surf);color:var(--t2);cursor:pointer;transition:all 0.1s}
+.ev-btn:hover{border-color:var(--acc);color:var(--acc)}
+.ev-btn.primary{background:var(--acc);color:#fff;border-color:var(--acc)}
+.ev-btn.primary:hover{background:var(--acc2)}
+
+/* Overdue banner */
+.overdue-banner{margin:10px 12px 0;padding:10px 14px;background:#FEF2F2;border:1px solid rgba(220,38,38,0.15);border-radius:var(--rlg);display:none;align-items:center;gap:10px}
+.overdue-banner.show{display:flex}
+[data-theme="dark"] .overdue-banner{background:#2D1515;border-color:rgba(239,68,68,0.2)}
+.overdue-banner-txt{flex:1;font-size:12px;color:#DC2626;font-weight:500}
+[data-theme="dark"] .overdue-banner-txt{color:#F87171}
+.overdue-fix-btn{font-family:var(--font);font-size:11px;padding:4px 10px;background:#DC2626;color:#fff;border:none;border-radius:var(--rsm);cursor:pointer;white-space:nowrap;transition:background 0.1s}
+.overdue-fix-btn:hover{background:#B91C1C}
+.overdue-dismiss{font-family:var(--font);font-size:11px;padding:4px 8px;background:transparent;border:none;color:#DC2626;cursor:pointer;opacity:0.6}
+.overdue-dismiss:hover{opacity:1}
+
+/* Haftalık sayaç */
+.weekly-counter{padding:6px 10px;margin:4px 8px;border-radius:var(--rsm);background:var(--b1);display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2)}
+.weekly-counter .wc-num{font-weight:700;color:var(--green);font-size:13px}
+.weekly-counter .wc-label{flex:1}
+.weekly-counter .wc-fire{font-size:14px}
+
+/* Son açılanlar */
+.recent-sec{padding:0 8px;margin-bottom:4px}
+.recent-item{display:flex;align-items:center;gap:7px;padding:5px 10px;border-radius:var(--rmd);cursor:pointer;color:var(--t2);font-size:12px;transition:all 0.1s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.recent-item:hover{background:var(--b1);color:var(--t1)}
+.recent-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.recent-txt{flex:1;overflow:hidden;text-overflow:ellipsis}
+
 /* FOCUS VISIBLE */
 .ni:focus-visible,.ibtn:focus-visible,.fab:focus-visible,.sort-btn:focus-visible,.empty-cta:focus-visible,.arcbtn:focus-visible,.delbtn:focus-visible,.cbtn:focus-visible,.bsec:focus-visible,.bpri:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 </style>
@@ -335,6 +384,11 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="13" height="13" rx="2"/><path d="M4 5h8M4 8h8M4 11h5" stroke-linecap="round"/></svg>
         Tüm Notlar<span class="bdg" id="bdg-allnotes"></span>
       </div>
+    </div>
+    <div class="sb-div"></div>
+    <div class="recent-sec" id="recent-sec" style="display:none">
+      <div class="sb-lbl" style="padding-bottom:2px">Son Açılanlar</div>
+      <div id="recent-list"></div>
     </div>
     <div class="sb-div"></div>
     <div class="sb-sec">
@@ -365,9 +419,10 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
         </div>
       </div>
     </div>
-    <div class="storage-warn" style="margin-top:8px">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3.5M8 10.5v.5" stroke-linecap="round"/></svg>
-      Veriler bu tarayıcıya kaydediliyor
+    <div class="weekly-counter" id="weekly-counter" style="display:none">
+      <span class="wc-num" id="wc-num">0</span>
+      <span class="wc-label">todo bu hafta</span>
+      <span class="wc-fire" id="wc-fire"></span>
     </div>
     <div class="sb-foot">
       <button class="ibtn" onclick="toggleDark()" title="Koyu mod (D)"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 00-5.2 11.7A6.5 6.5 0 018 3.5V1z"/></svg></button>
@@ -395,6 +450,25 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
           <svg viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
         </button>
       </div>
+    </div>
+    <!-- Retention banners -->
+    <div class="intent-banner" id="intent-banner">
+      <h4>☀ Günaydın — bugün ne yapacaksın?</h4>
+      <p>Bugüne odaklanmak için bir not seç:</p>
+      <div class="intent-actions" id="intent-actions"></div>
+    </div>
+    <div class="evening-banner" id="evening-banner">
+      <div class="ev-title"><span id="ev-count-icon">✓</span> <span id="ev-count-txt"></span></div>
+      <div class="ev-sub">Yarına ne taşımak istiyorsun?</div>
+      <div class="ev-actions">
+        <button class="ev-btn primary" onclick="switchView(\'today\');dismissEvening()">Bugünü düzenle</button>
+        <button class="ev-btn" onclick="dismissEvening()">Kapat</button>
+      </div>
+    </div>
+    <div class="overdue-banner" id="overdue-banner">
+      <span class="overdue-banner-txt" id="overdue-txt"></span>
+      <button class="overdue-fix-btn" onclick="rescheduleOverdue()">Bugüne taşı</button>
+      <button class="overdue-dismiss" onclick="dismissOverdue()">✕</button>
     </div>
     <div class="nlist" id="nlist"></div>
   </main>
@@ -475,7 +549,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
 // ── DATA MODEL ──
 // Note: { id, title, body (plain text, no [ ]), todos: [{id, text, done, date}], color, area, today, archived, createdAt, updatedAt }
 var COLORS=[{id:'purple',hex:'#7F77DD'},{id:'teal',hex:'#1D9E75'},{id:'coral',hex:'#D85A30'},{id:'amber',hex:'#BA7517'},{id:'blue',hex:'#378ADD'},{id:'pink',hex:'#D4537E'},{id:'gray',hex:'#888780'}];
-var DEFAULT_AREAS=[{id:'kisisel',name:'Kişisel',color:'purple'},{id:'is',name:'İş',color:'teal'},{id:'projeler',name:'Projeler',color:'coral'}];
+var DEFAULT_AREAS=[];
 
 function lsGet(k,d){try{var v=localStorage.getItem('nd4_'+k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function lsSet(k,v){try{localStorage.setItem('nd4_'+k,JSON.stringify(v));}catch(e){}}
@@ -487,18 +561,9 @@ var sortMode=lsGet('sort','date');
 var showDone=lsGet('showDone',true);
 var grpCollapsed=lsGet('grpCollapsed',{});
 
-// Onboarding — ilk açılış
+// İlk açılış — temiz başlangıç
 if(!notes){
-  notes=[{
-    id:'welcome',title:'Notodo\'ya hoş geldin 👋',archived:false,color:'purple',area:null,today:false,
-    body:'Not almak ve görevleri takip etmek için tasarlandı.\n\nSol üstteki + ile yeni not ekleyebilirsin. Başlığın altındaki alana notunu yaz, altındaki Todo\'lar bölümüne görevlerini ekle.',
-    todos:[
-      {id:tid(),text:'Bu todo\'ya tıklayarak tamamla',done:false,date:''},
-      {id:tid(),text:'Yeni todo eklemek için "Yeni todo ekle..." alanını kullan',done:false,date:''},
-      {id:tid(),text:'Bu görevi zaten tamamladım',done:true,date:''}
-    ],
-    createdAt:Date.now()
-  }];
+  notes=[];
   lsSet('notes',notes);
 }
 
@@ -645,7 +710,7 @@ function renderList(){
     if(view==='archive')h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M2 7l2-4h16l2 4"/><path d="M9 12h6" stroke-linecap="round"/></svg></div><h3>Arşiv boş</h3><p>Arşivlenen notlar burada görünür</p></div>';
     else if(view==='today')h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M16.95 4.93l-2.12 2.12M4.93 16.95l2.12 2.12" stroke-linecap="round"/></svg></div><h3>Bugün için hiçbir şey yok</h3><p>Bugüne odaklanmak için notlarından birini seç ve <span style="display:inline-flex;align-items:center;gap:3px;background:var(--acc-l);padding:1px 7px;border-radius:10px;font-size:10px;color:var(--acc);font-weight:500">&#9679; Bugüne ekle</span> butonuna tıkla</p><button class="empty-cta" onclick="switchView(\'inbox\')">Notlara git</button></div>';
     else if(eq)h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><h3>Sonuç bulunamadı</h3><p>Farklı bir arama dene</p></div>';
-    else h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M11 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-5"/><path d="M18 2l4 4-8 8H10v-4l8-8z"/></svg></div><h3>Henüz not yok</h3><p>İlk notunu oluştur</p><button class="empty-cta" onclick="startAdd()">+ Yeni Not</button></div>';
+    else h+='<div class="empty"><div class="empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></div><h3>Notların burada görünecek</h3><p>Notlarına todo ekleyebilir, alanlara ayırabilir, bugün için işaretleyebilirsin</p><button class="empty-cta" onclick="startAdd()">İlk notunu oluştur</button></div>';
   }
   var ts=todayStr();
   for(var vi=0;vi<v.length;vi++){
@@ -691,6 +756,7 @@ function openDetail(id){
   selId=id;
   if(!note.todos)note.todos=[];
   var det=document.getElementById('det');det.classList.add('open');
+  addRecent(id);
   document.getElementById('rh-r').style.display='block';
   // Title
   var tita=document.getElementById('d-title');tita.value=note.title||'';setTimeout(autoResizeTitle,0);
@@ -780,13 +846,18 @@ function toggleDoneSection(){showDone=!showDone;lsSet('showDone',showDone);rende
 function toggleTodo(id){
   var note=getNote(selId);if(!note||!note.todos)return;
   var t=note.todos.filter(function(x){return x.id===id;})[0];if(!t)return;
-  t.done=!t.done;note.updatedAt=Date.now();lsSet('notes',notes);renderTodos();renderList();
+  var wasDone=t.done;
+  t.done=!t.done;note.updatedAt=Date.now();lsSet('notes',notes);
+  if(!wasDone&&t.done)incrementWeeklyCounter();
+  renderTodos();renderList();
 }
 
 function toggleTodoGlobal(noteId,todoId){
   var note=getNote(noteId);if(!note||!note.todos)return;
   var t=note.todos.filter(function(x){return x.id===todoId;})[0];if(!t)return;
+  var wasDone=t.done;
   t.done=!t.done;note.updatedAt=Date.now();lsSet('notes',notes);
+  if(!wasDone&&t.done)incrementWeeklyCounter();
   if(selId===noteId)renderTodos();
   renderList();
 }
@@ -809,7 +880,14 @@ function onTodoTextKey(e,id){
     // focus new
     setTimeout(function(){
       var rows=document.querySelectorAll('.todo-item');
-      for(var i=0;i<rows.length;i++){if(rows[i].getAttribute('data-id')===newT.id){var txt=rows[i].querySelector('.todo-txt');if(txt)txt.focus();break;}}
+      for(var i=0;i<rows.length;i++){
+        if(rows[i].getAttribute('data-id')===newT.id){
+          var txt=rows[i].querySelector('.todo-txt');
+          if(txt)txt.focus();
+          rows[i].scrollIntoView({behavior:'smooth',block:'nearest'});
+          break;
+        }
+      }
     },30);
   }
   if(e.key==='Backspace'){var txt=e.target.innerText;if(!txt||txt==='\n'){e.preventDefault();deleteTodo(id);}}
@@ -832,8 +910,14 @@ function onTodoAddKey(e){
     var newId=tid();note.todos.push({id:newId,text:val,done:false,date:''});
     note.updatedAt=Date.now();lsSet('notes',notes);
     e.target.value='';renderTodos();renderList();
-    // flash animation
-    setTimeout(function(){var el=document.querySelector('[data-id="'+newId+'"]');if(el)el.classList.add('just-added');},10);
+    // flash + scroll into view
+    setTimeout(function(){
+      var el=document.querySelector('[data-id="'+newId+'"]');
+      if(el){
+        el.classList.add('just-added');
+        el.scrollIntoView({behavior:'smooth',block:'nearest'});
+      }
+    },30);
   }
   if(e.key==='Escape'){e.target.value='';e.target.blur();}
 }
@@ -893,7 +977,7 @@ function undoDelete(){
   showToast('Geri alındı',null,1500);openDetail(restoredId);
 }
 
-function switchView(v){view=v;lsSet('lastView',v);selId=null;addMode=false;closeDetail();closeAllPops();renderList();}
+function switchView(v){view=v;lsSet('lastView',v);selId=null;addMode=false;closeDetail();closeAllPops();renderList();renderRetention();}
 
 // ── AREAS ──
 function openAreaModal(){editAreaId=null;newAreaColor='purple';document.getElementById('area-inp').value='';document.getElementById('area-modal-title').textContent='Yeni Alan Ekle';document.getElementById('area-save-btn').textContent='Ekle';buildColorGrid();document.getElementById('area-overlay').classList.add('open');setTimeout(function(){document.getElementById('area-inp').focus();},100);}
@@ -996,10 +1080,189 @@ document.addEventListener('keydown',function(e){
   if((e.ctrlKey||e.metaKey)&&(e.key==='t'||e.key==='T')){e.preventDefault();if(selId)focusTodoAdd();}
 });
 
+// ── RETENTION: Son açılanlar ──
+var recentNotes = lsGet('recentNotes', []);
+function addRecent(id) {
+  recentNotes = recentNotes.filter(function(r) { return r !== id; });
+  recentNotes.unshift(id);
+  if (recentNotes.length > 3) recentNotes = recentNotes.slice(0, 3);
+  lsSet('recentNotes', recentNotes);
+  renderRecent();
+}
+function renderRecent() {
+  var sec = document.getElementById('recent-sec');
+  var list = document.getElementById('recent-list');
+  if (!sec || !list) return;
+  var valid = recentNotes.filter(function(id) { return getNote(id); });
+  if (!valid.length) { sec.style.display = 'none'; return; }
+  sec.style.display = 'block';
+  list.innerHTML = '';
+  valid.forEach(function(id) {
+    var n = getNote(id); if (!n) return;
+    var div = document.createElement('div');
+    div.className = 'recent-item';
+    div.innerHTML = '<div class="recent-dot" style="background:' + colorHex(n.color) + '"></div><span class="recent-txt">' + esc(n.title || 'Başlıksız') + '</span>';
+    div.onclick = (function(nid) { return function() { openDetail(nid); }; })(id);
+    list.appendChild(div);
+  });
+}
+
+// ── RETENTION: Haftalık sayaç ──
+function getWeekStart() {
+  var now = new Date(); var d = new Date(now);
+  d.setDate(d.getDate() - (d.getDay() === 0 ? 6 : d.getDay() - 1));
+  return d.toISOString().slice(0, 10);
+}
+function updateWeeklyCounter() {
+  var ws = getWeekStart();
+  var stored = lsGet('weeklyData', { weekStart: '', count: 0 });
+  if (stored.weekStart !== ws) { stored = { weekStart: ws, count: 0 }; lsSet('weeklyData', stored); }
+  var counter = document.getElementById('weekly-counter');
+  var el = document.getElementById('wc-num');
+  var fire = document.getElementById('wc-fire');
+  if (!counter) return;
+  if (stored.count === 0) {
+    counter.style.display = 'none';
+    return;
+  }
+  counter.style.display = 'flex';
+  if (el) el.textContent = stored.count;
+  if (fire) fire.textContent = stored.count >= 20 ? '🔥' : stored.count >= 10 ? '⚡' : stored.count >= 5 ? '✨' : '';
+}
+function incrementWeeklyCounter() {
+  var ws = getWeekStart();
+  var stored = lsGet('weeklyData', { weekStart: '', count: 0 });
+  if (stored.weekStart !== ws) stored = { weekStart: ws, count: 0 };
+  var wasZero = stored.count === 0;
+  stored.count++;
+  lsSet('weeklyData', stored);
+  updateWeeklyCounter();
+  // İlk todo tamamlandığında kutla
+  if (wasZero) {
+    showToast('Bu hafta ilk todonu tamamladın ✨', null, 2800);
+  }
+}
+
+// ── RETENTION: Overdue banner ──
+var overdueHidden = lsGet('overdueHidden', '');
+function renderOverdueBanner() {
+  var banner = document.getElementById('overdue-banner');
+  if (!banner || view !== 'today') { if (banner) banner.classList.remove('show'); return; }
+  if (overdueHidden === todayStr()) { banner.classList.remove('show'); return; }
+  var ts = todayStr();
+  var count = 0;
+  notes.forEach(function(n) {
+    if (n.archived) return;
+    (n.todos || []).forEach(function(t) { if (!t.done && t.date && t.date < ts) count++; });
+  });
+  if (!count) { banner.classList.remove('show'); return; }
+  var txt = document.getElementById('overdue-txt');
+  if (txt) txt.textContent = count + ' todo tarihini geçti';
+  banner.classList.add('show');
+}
+function rescheduleOverdue() {
+  var ts = todayStr();
+  notes.forEach(function(n) {
+    (n.todos || []).forEach(function(t) { if (!t.done && t.date && t.date < ts) t.date = ts; });
+    if (n.todos && n.todos.some(function(t) { return t.date === ts; })) n.updatedAt = Date.now();
+  });
+  lsSet('notes', notes);
+  document.getElementById('overdue-banner').classList.remove('show');
+  if (selId) renderTodos();
+  renderList();
+  showToast('Geçmiş todolar bugüne taşındı ✓', null, 2500);
+}
+function dismissOverdue() {
+  overdueHidden = todayStr(); lsSet('overdueHidden', overdueHidden);
+  document.getElementById('overdue-banner').classList.remove('show');
+}
+
+// ── RETENTION: Sabah intent prompt ──
+var intentShownDate = lsGet('intentShownDate', '');
+function renderIntentBanner() {
+  var banner = document.getElementById('intent-banner');
+  if (!banner || view !== 'today') { if (banner) banner.classList.remove('show'); return; }
+  var ts = todayStr();
+  var hour = new Date().getHours();
+  // Sadece sabah (05-12 arası), o gün henüz gösterilmediyse
+  if (hour < 5 || hour >= 13 || intentShownDate === ts) { banner.classList.remove('show'); return; }
+  // Hiç not yoksa gösterme
+  if (!notes.length) { banner.classList.remove('show'); return; }
+  // Bugün zaten 2+ notu varsa gösterme
+  var todayNotes = notes.filter(function(n) { return !n.archived && n.today; });
+  if (todayNotes.length >= 2) { banner.classList.remove('show'); return; }
+  // Önerilecek notları hazırla — son açılanlar önce, sonra diğerleri
+  var recentValid = recentNotes.filter(function(id) { var n=getNote(id); return n&&!n.archived&&!n.today; });
+  var others = notes.filter(function(n) { return !n.archived && !n.today && recentValid.indexOf(n.id)===-1; });
+  var candidates = recentValid.concat(others).slice(0, 4);
+  if (!candidates.length) { banner.classList.remove('show'); return; }
+  var actionsEl = document.getElementById('intent-actions');
+  if (!actionsEl) return;
+  actionsEl.innerHTML = '';
+  candidates.forEach(function(n) {
+    var btn = document.createElement('button');
+    btn.className = 'intent-pick';
+    btn.title = n.title || '';
+    btn.innerHTML = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:' + colorHex(n.color) + ';margin-right:5px;vertical-align:middle"></span>' + esc((n.title || 'Başlıksız').slice(0, 24));
+    btn.onclick = (function(nid) { return function() { addToTodayFromIntent(nid); }; })(n.id);
+    actionsEl.appendChild(btn);
+  });
+  var dismissBtn = document.createElement('button');
+  dismissBtn.className = 'intent-dismiss';
+  dismissBtn.textContent = 'Geç';
+  dismissBtn.onclick = dismissIntent;
+  actionsEl.appendChild(dismissBtn);
+  banner.classList.add('show');
+}
+function addToTodayFromIntent(id) {
+  var n = getNote(id); if (!n) return;
+  n.today = true; n.updatedAt = Date.now(); lsSet('notes', notes);
+  dismissIntent(); renderList();
+  showToast('"' + (n.title || 'Not') + '" bugüne eklendi ✓', null, 2000);
+}
+function dismissIntent() {
+  intentShownDate = todayStr(); lsSet('intentShownDate', intentShownDate);
+  var b = document.getElementById('intent-banner'); if (b) b.classList.remove('show');
+}
+
+// ── RETENTION: Akşam kapanış ──
+var eveningShownDate = lsGet('eveningShownDate', '');
+function renderEveningBanner() {
+  var banner = document.getElementById('evening-banner');
+  if (!banner || view !== 'today') { if (banner) banner.classList.remove('show'); return; }
+  var ts = todayStr();
+  var hour = new Date().getHours();
+  // Sadece akşam (17+), o gün henüz gösterilmediyse
+  if (hour < 17 || eveningShownDate === ts) { banner.classList.remove('show'); return; }
+  // Bugün tamamlanan todo sayısı
+  var doneToday = 0;
+  notes.forEach(function(n) {
+    (n.todos || []).forEach(function(t) { if (t.done) doneToday++; });
+  });
+  if (!doneToday) { banner.classList.remove('show'); return; }
+  var txt = document.getElementById('ev-count-txt');
+  if (txt) txt.textContent = 'Bugün ' + doneToday + ' todo tamamladın';
+  banner.classList.add('show');
+}
+function dismissEvening() {
+  eveningShownDate = todayStr(); lsSet('eveningShownDate', eveningShownDate);
+  var b = document.getElementById('evening-banner'); if (b) b.classList.remove('show');
+}
+
+// ── RETENTION: Tüm bannerları render et ──
+function renderRetention() {
+  renderOverdueBanner();
+  renderIntentBanner();
+  renderEveningBanner();
+  renderRecent();
+  updateWeeklyCounter();
+}
+
 // ── BOOT ──
 applyGroups();
 renderList();
 renderSidebar();
+renderRetention();
 </script>
 </body>
 </html>
