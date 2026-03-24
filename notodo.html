@@ -360,6 +360,41 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
 .recent-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .recent-txt{flex:1;overflow:hidden;text-overflow:ellipsis}
 
+
+/* ── MİKRO ANİMASYONLAR ── */
+
+/* 1. Renk çubuğu geçişi */
+.cbar{transition:background 0.35s ease}
+
+/* 2. Yeni todo checkbox büyüme */
+@keyframes cbAppear{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.todo-item.just-added .todo-cb{animation:cbAppear 0.25s ease forwards}
+
+/* 3. Bugüne ekle pulse */
+@keyframes todayPulse{0%{box-shadow:0 0 0 0 rgba(91,76,245,0.4)}100%{box-shadow:0 0 0 7px rgba(91,76,245,0)}}
+.today-dot-ui.pulse{animation:todayPulse 0.5s ease-out}
+
+/* 4. Arşiv / silme kaybolma */
+.nc.removing{animation:slideOutRight 0.22s ease forwards;pointer-events:none}
+@keyframes slideOutRight{to{opacity:0;transform:translateX(12px)}}
+
+/* 5. Başlık kaydedildi çizgisi */
+.dti-saved-line{height:1.5px;background:var(--acc);border-radius:1px;transform:scaleX(0);transform-origin:left;transition:transform 0.3s ease;margin:0 22px 0}
+.dti-saved-line.show{transform:scaleX(1)}
+.dti-saved-line.hide{transform:scaleX(0);transition:transform 0.4s ease 0.5s}
+
+/* 6. Sidebar badge bounce */
+@keyframes badgeBounce{0%{transform:scale(1)}40%{transform:scale(1.35)}70%{transform:scale(0.9)}100%{transform:scale(1)}}
+.bdg.bounce{animation:badgeBounce 0.3s ease}
+
+/* 7. Alan ekleme animasyonu — ni için */
+@keyframes areaSlideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+.ni.area-new{animation:areaSlideIn 0.2s ease}
+.adot.dot-pop{animation:cbAppear 0.25s ease}
+
+/* 8. Arama sonuç animasyonu — nc için (stagger) */
+.nc.search-result{animation:fadeSlideIn 0.15s ease both}
+
 /* FOCUS VISIBLE */
 .ni:focus-visible,.ibtn:focus-visible,.fab:focus-visible,.sort-btn:focus-visible,.empty-cta:focus-visible,.arcbtn:focus-visible,.delbtn:focus-visible,.cbtn:focus-visible,.bsec:focus-visible,.bpri:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 </style>
@@ -481,6 +516,7 @@ kbd{font-family:var(--mono);font-size:10px;background:var(--surf);border:1px sol
       <button class="cbtn" onclick="closeDetail()" title="Kapat (Esc)">&#x2715;</button>
     </div>
     <div class="dsave-hint" id="dsave-hint">otomatik kaydediliyor</div>
+    <div class="dti-saved-line" id="dti-saved-line"></div>
     <div class="dmeta">
       <span class="mlbl">Alan:</span>
       <select class="asel" id="d-area" onchange="saveNote();renderList()"></select>
@@ -724,11 +760,14 @@ function renderList(){
     if(n.today&&!n.archived)statusDots+='<span class="today-dot">&#9679; bugün</span>';
     if(hasOverdue&&!n.archived)statusDots+='<span class="overdue-dot" title="Geçmiş tarihli todo var"></span>';
     var areaLbl=aO&&!n.archived?'<span style="font-size:10px;color:var(--t3);">'+esc(aO.name)+'</span>':'';
-    h+='<div class="nc'+(selId===n.id?' sel':'')+(n.archived?' archived':'')+('" onclick="openDetail(\''+n.id+'\')">')+
+    var srCls=document.getElementById('search').value?' search-result':'';
+    h+='<div class="nc'+srCls+(selId===n.id?' sel':'')+(n.archived?' archived':'')+('" onclick="openDetail(\''+n.id+'\')">')+
       '<div class="cbar" style="background:'+colorHex(n.color)+'"></div>'+
       '<div class="nbw"><div class="nct">'+esc(n.title||'Başlıksız')+'</div>'+
       (prev?'<div class="npv">'+esc(prev)+'</div>':'')+
       '<div class="nmeta">'+areaLbl+archTag+tbdg+statusDots+'</div></div></div>';
+    // stagger delay for search results
+    if(document.getElementById('search').value) h=h.replace('class="nc search-result','class="nc search-result" style="animation-delay:'+(vi*0.04)+'s');
   }
   document.getElementById('nlist').innerHTML=h;if(addMode)attachAdd();renderSidebar();
 }
@@ -744,6 +783,8 @@ function attachAdd(){
         var noteArea=aViews.indexOf(view)!==-1?view:null;
         var n={id:uid(),title:val,archived:false,color:'gray',area:noteArea,today:view==='today',body:'',todos:[],createdAt:Date.now()};
         notes.unshift(n);lsSet('notes',notes);renderList();openDetail(n.id);
+        // badge bounce
+        setTimeout(function(){var b=document.getElementById('bdg-'+view);if(!b)b=document.getElementById('bdg-allnotes');if(b){b.classList.remove('bounce');void b.offsetWidth;b.classList.add('bounce');setTimeout(function(){b.classList.remove('bounce');},400);}},50);
       } else renderList();
     }
     if(e.key==='Escape'){addMode=false;renderList();}
@@ -796,6 +837,9 @@ function saveNote(){
   // save hint
   var sh=document.getElementById('dsave-hint');
   if(sh){sh.classList.add('show');clearTimeout(sh._t);sh._t=setTimeout(function(){sh.classList.remove('show');},1400);}
+  // başlık kaydedildi çizgisi
+  var sl=document.getElementById('dti-saved-line');
+  if(sl){sl.className='dti-saved-line show';clearTimeout(sl._t);sl._t=setTimeout(function(){sl.className='dti-saved-line hide';},900);}
 }
 
 function setColor(color){
@@ -809,6 +853,11 @@ function toggleToday(){
   if(!selId)return;var note=getNote(selId);if(!note)return;
   note.today=!note.today;note.updatedAt=Date.now();lsSet('notes',notes);
   var tt=document.getElementById('today-toggle');if(tt)tt.className='today-toggle'+(note.today?' on':'');
+  // pulse animasyonu
+  if(note.today){
+    var dot=document.querySelector('.today-dot-ui');
+    if(dot){dot.classList.remove('pulse');void dot.offsetWidth;dot.classList.add('pulse');setTimeout(function(){dot.classList.remove('pulse');},600);}
+  }
   showToast(note.today?'Bugüne eklendi ☀':'Bugünden çıkarıldı',null,1800);renderList();
 }
 
@@ -959,6 +1008,19 @@ function applyTodoDate(dateStr){
 // ── ARCHIVE / DELETE ──
 function toggleArchive(){
   if(!selId)return;var note=getNote(selId);if(!note)return;
+  // arşivleniyorsa önce kaybolma animasyonu, sonra veri güncelle
+  var wasArchived=note.archived;
+  if(!wasArchived){
+    var card=document.querySelector('.nc.sel');
+    if(card){
+      card.classList.add('removing');
+      setTimeout(function(){
+        note.archived=true;note.updatedAt=Date.now();lsSet('notes',notes);
+        showToast('Arşivlendi',null,2000);openDetail(selId);renderList();
+      },220);
+      return;
+    }
+  }
   note.archived=!note.archived;note.updatedAt=Date.now();lsSet('notes',notes);
   showToast(note.archived?'Arşivlendi':'Arşivden çıkarıldı',null,2000);openDetail(selId);renderList();
 }
@@ -989,7 +1051,10 @@ function saveArea(){
   var name=document.getElementById('area-inp').value.trim();if(!name)return;
   if(editAreaId){var a=getArea(editAreaId);if(a){a.name=name;a.color=newAreaColor;}}
   else{var id=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')+'_'+Date.now().toString(36);areas.push({id:id,name:name,color:newAreaColor});}
-  lsSet('areas',areas);closeAreaModal();renderSidebar();showToast(editAreaId?'Alan güncellendi':'"'+name+'" eklendi',null,1800);
+  lsSet('areas',areas);closeAreaModal();renderSidebar();
+  // yeni alan animasyonu
+  if(!editAreaId){setTimeout(function(){var items=document.querySelectorAll('#area-nav .ni');if(items.length){var last=items[items.length-1];last.classList.add('area-new');var dot=last.querySelector('.adot');if(dot){dot.classList.add('dot-pop');}setTimeout(function(){last.classList.remove('area-new');},300);}},30);}
+  showToast(editAreaId?'Alan güncellendi':'"'+name+'" eklendi',null,1800);
 }
 function deleteArea(id){
   // Custom confirm — no native dialog
